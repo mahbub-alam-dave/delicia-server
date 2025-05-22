@@ -36,6 +36,15 @@ async function run() {
       const cursor = await recipeCollection.find().toArray();
       res.send(cursor)
     })
+
+    app.get('/top-recipes', async (req, res) => {
+      const mostLikedRecipes = await recipeCollection(find)
+      .sort({likeCount: -1})
+      .limit(6)
+      .toArray()
+      res.json(mostLikedRecipes)
+    })
+
     app.post("/recipes", async (req, res) => {
       const newRecipe = req.body;
       const cursor = await recipeCollection.insertOne(newRecipe);
