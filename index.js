@@ -57,6 +57,26 @@ async function run() {
       res.send(cursor);
     });
 
+    app.patch('/recipes/:id', async (req, res) => {
+      const id = req.params.id;
+      const updatedRecipeDetails = req.body;
+      const filter = {_id: new ObjectId(id)}
+      const updatedDoc = {
+        $set: {
+          recipeName: updatedRecipeDetails.recipeName,
+          url: updatedRecipeDetails.url,
+          category: updatedRecipeDetails.category,
+          cuisineType: updatedRecipeDetails.cuisineType,
+          allIngredients: updatedRecipeDetails.allIngredients,
+          cookingTime: updatedRecipeDetails.cookingTime,
+          instructions: updatedRecipeDetails.instructions
+        }
+      }
+      const result = await recipeCollection.updateOne(filter, updatedDoc)
+      res.send(result) 
+      console.log(updatedRecipeDetails)
+    })
+
     // Send a ping to confirm a successful connection
     // await client.db("admin").command({ ping: 1 });
     console.log(
