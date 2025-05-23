@@ -114,8 +114,8 @@
         "url": "https://example.com/avocado-toast",
         "category": "Breakfast",
         "cuisineType": "American",
-        "cookingTime": "15 mins",
-        "ingredients": [
+        "cookingTime": "15",
+        "allIngredients": [
           "Bread slice",
           "Avocado",
           "Egg",

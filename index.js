@@ -1,5 +1,5 @@
 const express = require("express");
-const { MongoClient, ServerApiVersion } = require("mongodb");
+const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 const cors = require("cors");
 require("dotenv").config();
 const app = express();
@@ -15,7 +15,6 @@ app.get("/", (req, res) => {
 
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@mydatabase.sr7puaa.mongodb.net/?retryWrites=true&w=majority&appName=MyDatabase`;
 
-// Create a MongoClient with a MongoClientOptions object to set the Stable API version
 const client = new MongoClient(uri, {
   serverApi: {
     version: ServerApiVersion.v1,
@@ -27,7 +26,7 @@ const client = new MongoClient(uri, {
 async function run() {
   try {
     // Connect the client to the server	(optional starting in v4.7)
-    await client.connect();
+    // await client.connect();
 
     const recipeCollection = client.db("recipeBook").collection("recipes");
 
@@ -38,11 +37,18 @@ async function run() {
     })
 
     app.get('/top-recipes', async (req, res) => {
-      const mostLikedRecipes = await recipeCollection(find)
+      const mostLikedRecipes = await recipeCollection.find()
       .sort({likeCount: -1})
       .limit(6)
       .toArray()
-      res.json(mostLikedRecipes)
+      res.send(mostLikedRecipes)
+    })
+
+    app.get('/recipes/:id', async (req, res) => {
+      const id = req.params.id;
+      const query = {_id: new ObjectId(id)}
+      const result = await recipeCollection.findOne(query);
+      res.send(result)
     })
 
     app.post("/recipes", async (req, res) => {
@@ -52,7 +58,7 @@ async function run() {
     });
 
     // Send a ping to confirm a successful connection
-    await client.db("admin").command({ ping: 1 });
+    // await client.db("admin").command({ ping: 1 });
     console.log(
       "Pinged your deployment. You successfully connected to MongoDB!"
     );
