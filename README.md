@@ -24,4 +24,4 @@
 - etc.
 
 ## live link
-rainbow-sundae-9956fb.netlify.app
+- rainbow-sundae-9956fb.netlify.app
