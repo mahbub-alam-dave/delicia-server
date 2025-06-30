@@ -51,8 +51,17 @@ async function run() {
       res.send(result)
     })
 
+    app.get('/my-recent-recipes', async (req, res) => {
+      const email = req.query.email;
+      const query = {"author.email" : email}
+      const result = await recipeCollection.find(query).sort({createdAt: -1}).limit(3).toArray()
+      res.send(result)
+
+    })
+
     app.post("/recipes", async (req, res) => {
       const newRecipe = req.body;
+      newRecipe.createdAt = new Date().toISOString()
       const cursor = await recipeCollection.insertOne(newRecipe);
       res.send(cursor);
     });
@@ -60,6 +69,7 @@ async function run() {
     app.patch('/recipes/:id', async (req, res) => {
       const id = req.params.id;
       const updatedRecipeDetails = req.body;
+
       const filter = {_id: new ObjectId(id)}
       const updatedDoc = {
         $set: {
@@ -69,7 +79,8 @@ async function run() {
           cuisineType: updatedRecipeDetails.cuisineType,
           allIngredients: updatedRecipeDetails.allIngredients,
           cookingTime: updatedRecipeDetails.cookingTime,
-          instructions: updatedRecipeDetails.instructions
+          instructions: updatedRecipeDetails.instructions,
+          createdAt: new Date().toISOString()
         }
       }
       const result = await recipeCollection.updateOne(filter, updatedDoc)
